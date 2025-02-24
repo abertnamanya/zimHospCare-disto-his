@@ -1,127 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.ozonehis</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-alpha.10</version>
   </parent>
 
   <groupId>org.zimhospcare</groupId>
-  <artifactId>distro-his</artifactId>
+  <artifactId>org.zimhospcare</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  
-   <developers>
-    <developer>
-      <name>zimhospcare Developers</name>
-    </developer>
-  </developers>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
-    <docker.push.registry.username>openmrs</docker.push.registry.username>
   </properties>
 
   <dependencies>
     <!-- TODO: Add any implementation-specific dependencies -->
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>3.1.2</version>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <!-- Exclude files from Ozone -->
-            <id>Exclude unneeded Ozone files</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>
-                ${project.build.directory}/${project.artifactId}-${project.version}</outputDirectory>
-              <overwrite>true</overwrite>
-              <resources>
-                <resource>
-                  <directory>${project.build.directory}/ozone</directory>
-                  <excludes>
-                    <exclude>distro/configs/openmrs/frontend_config/ozone_logo*.svg</exclude>
-                  </excludes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-
-          <execution>
-            <!-- Copy over the Docker Compose override file -->
-            <id>Copy docker-compose-override.yml</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>
-                ${project.build.directory}/${project.artifactId}-${project.version}/run/docker/
-              </outputDirectory>
-              <overwrite>true</overwrite>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/scripts</directory>
-                  <includes>
-                    <include>docker-compose-override.yml</include>
-                  </includes>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <!-- Override the inherited Maven Parent plugin execution to exclude Superset configs -->
-            <!-- Override with local config files -->
-            <id>Copy local resources</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>
-                ${project.build.directory}/${project.artifactId}-${project.version}/distro/configs</outputDirectory>
-              <overwrite>true</overwrite>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/configs</directory>
-                  <excludes>
-                    <exclude>.gitkeep</exclude>
-                  </excludes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
-  <repositories>
-    <repository>
-      <id>mks-nexus-public</id>
-      <url>https://nexus.mekomsolutions.net/repository/maven-public/</url>
-    </repository>
-  </repositories>
-  
   <profiles>
     <profile>
       <id>validator</id>
@@ -146,33 +46,11 @@
                   <goal>validate-configurations</goal>
                 </goals>
                 <configuration>
-                  <sourceDir>
-                    ${project.build.directory}/${project.artifactId}-${project.version}/distro/configs/openmrs/initializer_config</sourceDir>
+                  <sourceDir>${project.build.directory}/${project.artifactId}-${project.version}/distro/configs/openmrs/initializer_config</sourceDir>
                 </configuration>
               </execution>
             </executions>
           </plugin>
-
-           <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>Add custom Frontend Configuration</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <echo message="Adding custom frontend config"/>
-                <replaceregexp file="${project.build.directory}/${project.artifactId}-${project.version}/run/docker/.env"
-                               match="(SPA_CONFIG_URLS=.+)" replace="\1,/openmrs/spa/ozone/ozone-frontend-config.json" />
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
 
         </plugins>
       </build>

@@ -1,5 +1,16 @@
 {
+  "@openmrs/esm-login-app": {
+    "logo": {
+      "src": "/openmrs/spa/ozone/ZimHospCareLogo.png"
+    },
+    "links": {
+      "src": "/openmrs/spa/home"
+    }
+  },
   "@openmrs/esm-primary-navigation-app": {
+    "logo": {
+      "src": "/openmrs/spa/ozone/ZimHospCareLogo.svg"
+    },
     "externalRefLinks": [
       {
         "title": "Pharmacy, Billing & Inventory",
@@ -11,4 +22,5 @@
       }
     ]
   }
+ 
 }
